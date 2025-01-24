@@ -5,11 +5,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobiletest.model.BookingData
+import com.example.mobiletest.model.Segment
 import com.example.mobiletest.repo.BookingRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +29,10 @@ class MainActViewModel @Inject constructor(
 
     private val _uiStateFlow = MutableStateFlow<MainPageUiState>(MainPageUiState.Loading)
     val uiStateFlow: StateFlow<MainPageUiState> = _uiStateFlow
+
+    private val _toastFlow = MutableSharedFlow<String>()
+    val toastFlow = _toastFlow.asSharedFlow()
+
 
     fun fetchBookingData() {
         _uiStateFlow.value = MainPageUiState.Loading
@@ -56,9 +63,9 @@ class MainActViewModel @Inject constructor(
     }
 
     private fun updateUi(data: BookingData) {
-        data.segments.let {
+        data.segments.let { segments ->
             _uiStateFlow.value =
-                MainPageUiState.Success(it.map { it.originAndDestinationPair.origin.displayName })
+                MainPageUiState.Success(segments)
         }
     }
 
@@ -73,10 +80,25 @@ class MainActViewModel @Inject constructor(
         return expireTime > System.currentTimeMillis() / 1000
     }
 
+    /**
+     * check ticket entry is expire
+     */
+    fun checkTicketExpire() {
+        viewModelScope.launch {
+            val expireTime = bookingRepository.getCacheExpireTime().first()
+            if(expireTime < System.currentTimeMillis() / 1000){
+                //ticket entry is expire ,need toast
+                _toastFlow.emit("Ticket entry is expire")
+            }else{
+                _uiStateFlow.value = MainPageUiState.Success(emptyList())
+            }
+        }
+    }
+
 }
 
 sealed interface MainPageUiState {
     object Loading : MainPageUiState
     data class Error(val throwable: Throwable) : MainPageUiState
-    data class Success(val data: List<String>) : MainPageUiState
+    data class Success(val data: List<Segment>) : MainPageUiState
 }

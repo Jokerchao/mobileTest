@@ -40,6 +40,6 @@ data class Location(
     val code: String,
     @SerializedName("displayName")
     val displayName: String,
-    @SerializedName("timeZone")
+    @SerializedName("url")
     val url: String
 ): Serializable
