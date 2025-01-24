@@ -56,6 +56,8 @@ dependencies {
 
     implementation(libs.dagger.android)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
     ksp(libs.hilt.android.compiler)
     // Hilt and instrumented tests.
 //    androidTestImplementation(libs.hilt.android.testing)
@@ -71,6 +73,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.retrofit.mock)
 
     // Dagger Hilt
 
