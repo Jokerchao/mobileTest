@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+//    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -49,6 +52,18 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.gson)
+
+    implementation(libs.dagger.android)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    // Hilt and instrumented tests.
+//    androidTestImplementation(libs.hilt.android.testing)
+//    kaptAndroidTest(libs.hilt.android.compiler)
+    implementation(libs.dagger)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,4 +71,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Dagger Hilt
+
 }
